@@ -1,8 +1,12 @@
 # docker-wordpress-nginx
 
 > This is a fork of [eugeneware/docker-wordpress-nginx](https://github.com/eugeneware/docker-wordpress-nginx). I wanted to move some real world blogs to Docker and this project seemed like a nice basis for it. I changed a few things like allowing larger file uploads, made WordPress auto upgrade work through SSH, changed file permissions so that web user is only allowed to modify uploads directory (PHP files from this directory are not executed) etc. Wordpress user password for auto upgrade can be found from the logs as "user password".
+>
 > TODO: Currently ALL privileges are granted to DB_USER, this needs to be changed. E-mail sending does not work yet, all emails are logged to /var/sendmail.log - for security reasons I want to create a sendmail replacement daemon that only sends messages to valid users found from the MySQL WordPress users table and not to arbitrary e-mail addresses.
-> One reason why you might not want to use this Dockerfile without modification is that the WordPress version installed is in Estonian language. You can change this this [here](Dockerfile#L53).
+>
+> One reason why you might not want to use this Dockerfile without modification is that the WordPress version installed is in Estonian language. You can change this this [here](Dockerfile#L54).
+>
+> For upgrading WordPress version or adding themes/plugins thorugh WordPress admin interface, use SSH user password found from the logs
 
 A Dockerfile that installs the latest wordpress, nginx, php-apc and php-fpm.
 

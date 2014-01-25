@@ -10,8 +10,12 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
   sleep 10s
   # Here we generate random passwords (thank you pwgen!). The first two are for mysql users, the last batch for random keys in wp-config.php
   WORDPRESS_DB="wordpress"
-  ROOT_PASSWORD=`pwgen -c -n -1 12`
-  USER_PASSWORD=`pwgen -c -n -1 12`
+
+  MYSQL_ROOT_PASSWORD=`pwgen -c -n -1 12`
+  MYSQL_USER_PASSWORD=`pwgen -c -n -1 12`
+
+  SSH_ROOT_PASSWORD=`pwgen -c -n -1 12`
+  SSH_USER_PASSWORD=`pwgen -c -n -1 12`
 
   WORDPRESS_ROOT="/usr/share/nginx/www"
   WORDPRESS_UPLOADS="uploads"
@@ -20,12 +24,14 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
 
   ln -s $WORDPRESS_ROOT /home/wordpress/wordpress
 
-  echo "root:$ROOT_PASSWORD" | chpasswd
-  echo "wordpress:$USER_PASSWORD" | chpasswd
+  echo "root:$SSH_ROOT_PASSWORD" | chpasswd
+  echo "wordpress:$SSH_USER_PASSWORD" | chpasswd
 
   # Expose passwords in logs
-  echo root password: $ROOT_PASSWORD
-  echo user password: $USER_PASSWORD
+  echo MySQL root password: $MYSQL_ROOT_PASSWORD
+  echo MySQL user password: $MYSQL_USER_PASSWORD
+  echo SSH root password: $SSH_ROOT_PASSWORD
+  echo SSH user password: $SSH_USER_PASSWORD
 
   # Escape any unsopperted chars, eg "/"
   SAFE_WORDPRESS_UPLOADS=$(printf '%s\n' "$WORDPRESS_UPLOADS" | sed 's/[[\.*^$(){}?+|/]/\\&/g')
@@ -33,7 +39,7 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
 
   sed -e "s/database_name_here/$WORDPRESS_DB/
 s/username_here/$WORDPRESS_DB/
-s/password_here/$USER_PASSWORD/
+s/password_here/$MYSQL_USER_PASSWORD/
 /'AUTH_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
 /'SECURE_AUTH_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
 /'LOGGED_IN_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
@@ -97,8 +103,8 @@ echo \"\" >> \$SENDMAIL_LOG" > /usr/bin/sendmail
   touch $SENDMAIL_LOG
   chown www-data:www-data $SENDMAIL_LOG
 
-  mysqladmin -u root password $ROOT_PASSWORD
-  mysql -uroot -p$ROOT_PASSWORD -e "CREATE DATABASE wordpress; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY '$USER_PASSWORD'; FLUSH PRIVILEGES;"
+  mysqladmin -u root password $MYSQL_ROOT_PASSWORD
+  mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE wordpress; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD'; FLUSH PRIVILEGES;"
   killall mysqld
 fi
 
