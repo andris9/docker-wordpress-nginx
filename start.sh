@@ -98,7 +98,7 @@ echo \"\" >> \$SENDMAIL_LOG" > /usr/bin/sendmail
   chown www-data:www-data $SENDMAIL_LOG
 
   mysqladmin -u root password $ROOT_PASSWORD
-  mysql -uroot -p$ROOT_PASSWORD -e "CREATE DATABASE wordpress; GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY '$USER_PASSWORD'; FLUSH PRIVILEGES;"
+  mysql -uroot -p$ROOT_PASSWORD -e "CREATE DATABASE wordpress; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY '$USER_PASSWORD'; FLUSH PRIVILEGES;"
   killall mysqld
 fi
 
