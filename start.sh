@@ -5,9 +5,6 @@
 # DB_NAME=$(awk -F "'" '/DB_NAME/ {print $4}' /var/data/sources/wp-config.php)
 
 if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
-  #mysql has to be started this way as it doesn't work to call from /etc/init.d
-  /usr/bin/mysqld_safe &
-  sleep 10s
   # Here we generate random passwords (thank you pwgen!). The first two are for mysql users, the last batch for random keys in wp-config.php
   WORDPRESS_DB="wordpress"
 
@@ -17,26 +14,33 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
   SSH_ROOT_PASSWORD=`pwgen -c -n -1 12`
   SSH_USER_PASSWORD=`pwgen -c -n -1 12`
 
-  WORDPRESS_ROOT="/usr/share/nginx/www"
-  WORDPRESS_UPLOADS="uploads"
-
-  mkdir -p "$WORDPRESS_ROOT/$WORDPRESS_UPLOADS"
-
-  ln -s $WORDPRESS_ROOT /home/wordpress/wordpress
-
-  echo "root:$SSH_ROOT_PASSWORD" | chpasswd
-  echo "wordpress:$SSH_USER_PASSWORD" | chpasswd
-
   # Expose passwords in logs
   echo MySQL root password: $MYSQL_ROOT_PASSWORD
   echo MySQL user password: $MYSQL_USER_PASSWORD
   echo SSH root password: $SSH_ROOT_PASSWORD
   echo SSH user password: $SSH_USER_PASSWORD
 
+  # Change SSH passwords
+  echo "root:$SSH_ROOT_PASSWORD" | chpasswd
+  echo "wordpress:$SSH_USER_PASSWORD" | chpasswd
+
+  #mysql has to be started this way as it doesn't work to call from /etc/init.d
+  /usr/bin/mysqld_safe &
+  sleep 10s
+
+  # setup directories
+  WORDPRESS_ROOT="/usr/share/nginx/www"
+  WORDPRESS_UPLOADS="uploads"
+  mkdir -p "$WORDPRESS_ROOT/$WORDPRESS_UPLOADS"
+
+  # create a link of wordpress directory to ssh user home
+  ln -s $WORDPRESS_ROOT /home/wordpress/wordpress
+
   # Escape any unsopperted chars, eg "/"
   SAFE_WORDPRESS_UPLOADS=$(printf '%s\n' "$WORDPRESS_UPLOADS" | sed 's/[[\.*^$(){}?+|/]/\\&/g')
   SAFE_WORDPRESS_ROOT=$(printf '%s\n' "$WORDPRESS_ROOT/" | sed 's/[[\.*^$(){}?+|/]/\\&/g')
 
+  # Create wp-config.php with selected values
   sed -e "s/database_name_here/$WORDPRESS_DB/
 s/username_here/$WORDPRESS_DB/
 s/password_here/$MYSQL_USER_PASSWORD/
@@ -78,9 +82,9 @@ if ( count( \$plugins ) === 0 ) {
 }
 ENDL
 
+  # Ensure proper file permissions and ownership
   chown wordpress:wordpress -R /usr/share/nginx/www
   chown www-data:www-data -R "$WORDPRESS_ROOT/$WORDPRESS_UPLOADS"
-
   find "$WORDPRESS_ROOT" -type d -exec chmod 755 {} \;
   find "$WORDPRESS_ROOT" -type f -exec chmod 644 {} \;
 
@@ -103,6 +107,7 @@ echo \"\" >> \$SENDMAIL_LOG" > /usr/bin/sendmail
   touch $SENDMAIL_LOG
   chown www-data:www-data $SENDMAIL_LOG
 
+  # Create database user for WordPress database
   mysqladmin -u root password $MYSQL_ROOT_PASSWORD
   mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE wordpress; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD'; FLUSH PRIVILEGES;"
   killall mysqld

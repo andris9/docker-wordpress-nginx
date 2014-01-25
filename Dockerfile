@@ -24,7 +24,8 @@ RUN mkdir -p /var/run/sshd && locale-gen en_US.utf8 && echo 'LC_ALL="en_US.utf8"
 
 # mysql config
 RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
-RUN sed -i -e "s/^syslog/log-error=error.log/" /etc/mysql/conf.d/mysqld_safe_syslog.cnf
+# Uncomment this line if you want mysql logs to a log file instead of syslog
+# RUN sed -i -e "s/^syslog/log-error=error.log/" /etc/mysql/conf.d/mysqld_safe_syslog.cnf
 
 # nginx config
 RUN sed -i -e "s/keepalive_timeout\s*65/keepalive_timeout 2/" /etc/nginx/nginx.conf
