@@ -29,24 +29,8 @@ $ sudo docker build -t="docker-wordpress-nginx" .
 To spawn a new instance of wordpress:
 
 ```bash
-$ sudo docker run -p 80 -d -e SMTP="smtp://user:pass@localhost:port" docker-wordpress-nginx
+$ sudo docker run -p 80 -d docker-wordpress-nginx
 ```
-
-If you want to send mail you need to provide SMTP connection data. This information is not exposed to the php user. 
-
-For example if you want to use Gmail as your SMTP provider, use the following command (replace the user and password with your own).
-
-```bash
-docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:587" docker-wordpress-nginx
-```
-
-To add additional security, block outgoing port 25 for your docker containers by running in the docker host:
-
-```bash
-iptables -I FORWARD -p tcp --dport 25 -j DROP
-```
-
-> **NB!** this blocks port 25 for all docker containers in this host, consult iptables documentation if you want to block only specific containers
 
 You'll see an ID output like:
 ```
@@ -69,3 +53,21 @@ You can the visit the following URL in a browser on your host machine to get sta
 ```
 http://127.0.0.1:<port>
 ```
+
+### E-mail
+
+If you want to send mail you need to provide SMTP connection data by adding `-e SMTP=smtpdata` option to `docker run`. This information is not exposed to the php user. 
+
+For example if you want to use Gmail as your SMTP provider, use the following command (replace the user and password with your own).
+
+```bash
+docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:587" docker-wordpress-nginx
+```
+
+To add additional security, block outgoing port 25 for your docker containers by running in the docker host:
+
+```bash
+iptables -I FORWARD -p tcp --dport 25 -j DROP
+```
+
+> **NB!** this blocks port 25 for all docker containers in this host, consult iptables documentation if you want to block only specific containers
