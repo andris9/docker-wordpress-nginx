@@ -1,12 +1,14 @@
 # docker-wordpress-nginx
 
-> This is a fork of [eugeneware/docker-wordpress-nginx](https://github.com/eugeneware/docker-wordpress-nginx). I wanted to move some real world blogs to Docker and this project seemed like a nice basis for it. I changed a few things like allowing larger file uploads, made WordPress auto upgrade work through SSH, changed file permissions so that web user is only allowed to modify uploads directory (PHP files from this directory are not executed) etc. Wordpress user password for auto upgrade can be found from the logs as "user password".
->
-> TODO: Currently ALL privileges are granted to DB_USER, this needs to be changed. E-mail sending does not work yet, all emails are logged to /var/sendmail.log - for security reasons I want to create a sendmail replacement daemon that only sends messages to valid users found from the MySQL WordPress users table and not to arbitrary e-mail addresses.
->
-> One reason why you might not want to use this Dockerfile without modification is that the WordPress version installed is in Estonian language. You can change this this [here](Dockerfile#L54).
->
-> For upgrading WordPress version or adding themes/plugins thorugh WordPress admin interface, use SSH user password found from the logs
+This is a fork of [eugeneware/docker-wordpress-nginx](https://github.com/eugeneware/docker-wordpress-nginx). I wanted to move some real world blogs to Docker and this project seemed like a nice basis for it. I changed a few things like allowing larger file uploads, made WordPress auto upgrade work through SSH, changed file permissions so that web user is only allowed to modify uploads directory (PHP files from this directory are not executed) etc. Wordpress user password for auto upgrade can be found from the logs as "user password".
+
+For security reasons I created a sendmail replacement daemon that only sends messages to valid users found from the MySQL WordPress users table and not to arbitrary e-mail addresses. Downside is that you need to provide valid SMTP information for the container.
+
+One reason why you might not want to use this Dockerfile without modification is that the WordPress version installed is in Estonian language. You can change this this [here](Dockerfile#L61).
+
+For upgrading WordPress version or adding themes/plugins through WordPress admin interface, use SSH user password found from the logs
+
+----
 
 A Dockerfile that installs the latest wordpress, nginx, php-apc and php-fpm.
 
@@ -30,7 +32,13 @@ To spawn a new instance of wordpress:
 $ sudo docker run -p 80 -d -e SMTP="smtp://user:pass@localhost:port" docker-wordpress-nginx
 ```
 
-If you want to send mail you need to provide SMTP connection data. This information is not exposed to the php user. To add additional security, block outgoing port 25 for your docker containers by runnint in the docker host:
+If you want to send mail you need to provide SMTP connection data. This information is not exposed to the php user. 
+
+For example if you want to use Gmail as your SMTP provider, use the following command (replace the user and password with your own).
+
+docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:587" docker-wordpress-nginx
+
+To add additional security, block outgoing port 25 for your docker containers by running in the docker host:
 
 ```bash
 iptables -I FORWARD -p tcp --dport 25 -j DROP
