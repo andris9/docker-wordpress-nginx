@@ -36,7 +36,9 @@ If you want to send mail you need to provide SMTP connection data. This informat
 
 For example if you want to use Gmail as your SMTP provider, use the following command (replace the user and password with your own).
 
+```bash
 docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:587" docker-wordpress-nginx
+```
 
 To add additional security, block outgoing port 25 for your docker containers by running in the docker host:
 
