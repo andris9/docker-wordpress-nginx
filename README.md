@@ -27,8 +27,16 @@ $ sudo docker build -t="docker-wordpress-nginx" .
 To spawn a new instance of wordpress:
 
 ```bash
-$ sudo docker run -p 80 -d docker-wordpress-nginx
+$ sudo docker run -p 80 -d -e SMTP="smtp://user:pass@localhost:port" docker-wordpress-nginx
 ```
+
+If you want to send mail you need to provide SMTP connection data. This information is not exposed to the php user. To add additional security, block outgoing port 25 for your docker containers by runnint in the docker host:
+
+```bash
+iptables -I FORWARD -p tcp --dport 25 -j DROP
+```
+
+> **NB!** this blocks port 25 for all docker containers in this host, consult iptables documentation if you want to block only specific containers
 
 You'll see an ID output like:
 ```

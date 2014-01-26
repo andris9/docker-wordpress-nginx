@@ -19,6 +19,12 @@ RUN apt-get -y install mysql-server mysql-client nginx php5-fpm php5-mysql php-a
 # Wordpress Requirements
 RUN apt-get -y install php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl libssh2-php
 
+# Email requirements
+RUN apt-get install -y python-software-properties software-properties-common python build-essential && add-apt-repository -y ppa:chris-lea/node.js && apt-get update && apt-get install -y nodejs
+RUN npm install --unsafe-perm -g wp-sendmail@0.1.4
+
+ADD ./wp-sendmail.js /etc/wp-sendmail.js
+
 # Create directory for sshd and set locale
 RUN mkdir -p /var/run/sshd && locale-gen en_US.utf8 && echo 'LC_ALL="en_US.utf8"' > /etc/environment
 
@@ -39,7 +45,7 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g;s/upload_max_filesize = 2M/upload_max_filesize = 10M/;s/post_max_size = 8M/post_max_size = 10M/;s/expose_php = On/expose_php = Off/;s/max_execution_time = 30/max_execution_time = 60/;s/;ignore_user_abort = On/ignore_user_abort = Off/" /etc/php5/fpm/php.ini
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN find /etc/php5/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
-RUN echo "php_admin_value[sendmail_path] = /usr/bin/sendmail -t -i" >> /etc/php5/fpm/pool.d/www.conf
+RUN echo "php_admin_value[sendmail_path] = /usr/bin/wp-sendmail" >> /etc/php5/fpm/pool.d/www.conf
 
 # User for the blog
 RUN useradd -s /bin/bash -d /home/wordpress -m wordpress && usermod -aG www-data wordpress

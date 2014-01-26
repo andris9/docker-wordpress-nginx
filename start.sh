@@ -88,24 +88,11 @@ ENDL
   find "$WORDPRESS_ROOT" -type d -exec chmod 755 {} \;
   find "$WORDPRESS_ROOT" -type f -exec chmod 644 {} \;
 
-  # create dummy sendmail client
-  SENDMAIL_LOG="/var/log/sendmail.log"
-  echo "#!/bin/bash
-
-SENDMAIL_LOG=\"$SENDMAIL_LOG\"
-
-echo \"[`date`]\" >> \$SENDMAIL_LOG
-echo \"\$0 \$*\" >> \$SENDMAIL_LOG
-
-while read line
-do
-  echo \"\$line\" >> \$SENDMAIL_LOG
-done < /proc/\${\$}/fd/0
-
-echo \"\" >> \$SENDMAIL_LOG" > /usr/bin/sendmail
-  chmod +x /usr/bin/sendmail
-  touch $SENDMAIL_LOG
-  chown www-data:www-data $SENDMAIL_LOG
+  # email settings
+  sed -i -e "s/MYSQL_PASSWORD/$MYSQL_USER_PASSWORD/;s/MYSQL_PREFIX/wp_/" /etc/wp-sendmail.js
+  chown root:root /etc/wp-sendmail.js
+  chmod 0400 /etc/wp-sendmail.js
+  rm -rf /etc/wp-sendmail.js-e
 
   # Create database user for WordPress database
   mysqladmin -u root password $MYSQL_ROOT_PASSWORD
