@@ -1,6 +1,6 @@
 # docker-wordpress-nginx
 
-This is a fork of [eugeneware/docker-wordpress-nginx](https://github.com/eugeneware/docker-wordpress-nginx). I wanted to move some real world blogs to Docker and this project seemed like a nice basis for it. I changed a few things like allowing larger file uploads, made WordPress auto upgrade work through SSH, changed file permissions so that web user is only allowed to modify uploads directory (PHP files from this directory are not executed) etc. Wordpress user password for auto upgrade can be found from the logs as "user password".
+This is a fork of [eugeneware/docker-wordpress-nginx](https://github.com/eugeneware/docker-wordpress-nginx). I wanted to move some real world blogs to Docker and this project seemed like a nice basis for it. I changed a few things like allowing larger file uploads, made WordPress auto upgrade work through SSH, changed file permissions so that web user is only allowed to modify uploads directory (PHP files from this directory are not executed) etc. Wordpress user password for auto upgrade can be found from the logs as "ssh user password".
 
 For security reasons I created a sendmail replacement daemon that only sends messages to valid users found from the MySQL WordPress users table and not to arbitrary e-mail addresses. Downside is that you need to provide valid SMTP information for the container.
 
@@ -64,14 +64,6 @@ For example if you want to use Gmail as your SMTP provider, use the following co
 docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:587" docker-wordpress-nginx
 ```
 
-To add additional security, block outgoing port 25 for your docker containers by running in the docker host:
-
-```bash
-iptables -I FORWARD -p tcp --dport 25 -j DROP
-```
-
-> **NB!** this blocks port 25 for all docker containers in this host, consult iptables documentation if you want to block only specific containers
-
 ### Features
 
   * File uploads are limited to 10MB
@@ -94,8 +86,7 @@ iptables -I FORWARD -p tcp --dport 25 -j DROP
 
 ### Security issues
 
-  *  You should block outgoing port 25 in the host machine (you can configure wp-sendmail to use another port). Helps against trojans that are using port 25 for SMTP
-  * `open_basedir` could be useful but currently is not set as it broke WordPress auto upgrading
+  * You should block forwarding outgoing port 25 in the host machine (you can configure wp-sendmail to use another port). Helps against trojans that are using port 25 for SMTP
+  * `open_basedir` could be useful to use but currently is not set as it broke WordPress auto upgrading, didn't find the issue
   * `allow_url_fopen` is on - setting it off broke WordPress auto upgrade
   * `wp-config.php` should be only owner readable but `www-data` needs to access it too, so file permissions are not changed
-
