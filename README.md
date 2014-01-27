@@ -78,8 +78,8 @@ docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:
   * All outgoing e-mails are checked - if recipients can't be found from the users table or admin email option, the mail is discarded. Helps against trojans that are using PHP `mail()` command to send spam.
   * All WordPress files belong to user `wordpress`, php is executed as `www-data`
   * Only writable folder for user `www-data` is */uploads* - executing php scripts is forbidden from this directory. Helps against attackers that upload php files to server
-  * Server and PHP versions are not advertised with headers
-  * WordPress MySQL user has only required privileges
+  * Server and PHP version numbers are not advertised with HTTP headers. Access to meta files (like readme.html) that include WordPress version number is also restricted (WP version number is not completely hidden though and can be checked)
+  * WordPress MySQL user has only required privileges (no access to `FILE` or `GRANT OPTION` or other nonsense)
   * No errors are shown to the user
   * 403 errors are displayed as 404
   * WordPress theme and plugin editor is disabled (and would not work anyway as theme and plugin directories are not writable for the php user)
@@ -90,3 +90,4 @@ docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:
   * `open_basedir` could be useful to use but currently is not set as it broke WordPress auto upgrading, didn't find the issue
   * `allow_url_fopen` is on - setting it off broke WordPress auto upgrade
   * `wp-config.php` should be only owner readable but `www-data` needs to access it too, so file permissions are not changed
+  * Wordpress version can be detected from the RSS feed (generator tag)
