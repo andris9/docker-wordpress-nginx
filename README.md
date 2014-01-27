@@ -75,7 +75,7 @@ docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:
 ### Security features
 
   * A lot of functions (including all shell functions and phpinfo) are disabled.
-  * All outgoing e-mails are checked - if recipients can't be found from the users table or admin email option, the mail is discarded. Helps against trojans that are using PHP `mail()` command.
+  * All outgoing e-mails are checked - if recipients can't be found from the users table or admin email option, the mail is discarded. Helps against trojans that are using PHP `mail()` command to send spam.
   * All WordPress files belong to user `wordpress`, php is executed as `www-data`
   * Only writable folder for user `www-data` is */uploads* - executing php scripts is forbidden from this directory. Helps against attackers that upload php files to server
   * Server and PHP versions are not advertised with headers
@@ -86,7 +86,7 @@ docker run -p 80 -d -e SMTP="smpt://user.name@gmail.com:password@smtp.gmail.com:
 
 ### Security issues
 
-  * You should block forwarding outgoing port 25 in the host machine (you can configure wp-sendmail to use another port). Helps against trojans that are using port 25 for SMTP
+  * You should block forwarding outgoing port 25 in the host machine (you can configure wp-sendmail to use another port). Helps against trojans that are using port 25 for SMTP to send spam.
   * `open_basedir` could be useful to use but currently is not set as it broke WordPress auto upgrading, didn't find the issue
   * `allow_url_fopen` is on - setting it off broke WordPress auto upgrade
   * `wp-config.php` should be only owner readable but `www-data` needs to access it too, so file permissions are not changed
