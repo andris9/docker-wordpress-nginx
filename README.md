@@ -4,7 +4,7 @@ This is a fork of [eugeneware/docker-wordpress-nginx](https://github.com/eugenew
 
 For security reasons I created a sendmail replacement daemon that only sends messages to valid users found from the MySQL WordPress users table and not to arbitrary e-mail addresses. Downside is that you need to provide valid SMTP information for the container.
 
-One reason why you might not want to use this Dockerfile without modification is that the WordPress version installed is in Estonian language. You can change this this [here](Dockerfile#L61).
+One reason why you might not want to use this Dockerfile without modification is that the WordPress version installed is in Estonian language. You can change this [here](Dockerfile#L61).
 
 For upgrading WordPress version or adding themes/plugins through WordPress admin interface, use SSH user password found from the logs
 
