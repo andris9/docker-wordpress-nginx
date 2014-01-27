@@ -78,6 +78,7 @@ iptables -I FORWARD -p tcp --dport 25 -j DROP
   * You can use a SMTP provider for outgoing e-mail (SendGrid, Gmail, Mailgun etc.)
   * WordPress auto upgrade works through SSH and is preconfigured, only user password needs to be provided
   * Static files are aggressively cached
+  * SSH access is enabled. There are two accounts: `admin` (root) and `wordpress` (user). You can find the passwords from container log.
 
 ### Security features
 
