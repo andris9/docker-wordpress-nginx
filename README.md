@@ -71,3 +71,30 @@ iptables -I FORWARD -p tcp --dport 25 -j DROP
 ```
 
 > **NB!** this blocks port 25 for all docker containers in this host, consult iptables documentation if you want to block only specific containers
+
+### Features
+
+  * File uploads are limited to 10MB
+  * You can use a SMTP provider for outgoing e-mail (SendGrid, Gmail, Mailgun etc.)
+  * WordPress auto upgrade works through SSH and is preconfigured, only user password needs to be provided
+  * Static files are aggressively cached
+
+### Security features
+
+  * A lot of functions (including all shell functions and phpinfo) are disabled.
+  * All outgoing e-mails are checked - if recipients can't be found from the users table or admin email option, the mail is discarded. Helps against trojans that are using PHP `mail()` command.
+  * All WordPress files belong to user `wordpress`, php is executed as `www-data`
+  * Only writable folder for user `www-data` is */uploads* - executing php scripts is forbidden from this directory. Helps against attackers that upload php files to server
+  * Server and PHP versions are not advertised with headers
+  * WordPress MySQL user has only required privileges
+  * No errors are shown to the user
+  * 403 errors are displayed as 404
+  * WordPress theme and plugin editor is disabled (and would not work anyway as theme and plugin directories are not writable for the php user)
+
+### Security issues
+
+  *  You should block outgoing port 25 in the host machine (you can configure wp-sendmail to use another port). Helps against trojans that are using port 25 for SMTP
+  * `open_basedir` could be useful but currently is not set as it broke WordPress auto upgrading
+  * `allow_url_fopen` is on - setting it off broke WordPress auto upgrade
+  * `wp-config.php` should be only owner readable but `www-data` needs to access it too, so file permissions are not changed
+
