@@ -10,8 +10,8 @@ RUN apt-get update
 RUN apt-get -y upgrade
 
 # Keep upstart from complaining
-RUN dpkg-divert --local --rename --add /sbin/initctl
-RUN ln -s /bin/true /sbin/initctl
+# RUN dpkg-divert --local --rename --add /sbin/initctl
+# RUN ln -s /bin/true /sbin/initctl
 
 # Basic Requirements
 # RUN apt-get -y install mysql-server mysql-client nginx php5-fpm php5-mysql php-apc pwgen python-setuptools curl git unzip openssh-server vim
@@ -59,7 +59,7 @@ RUN /usr/bin/easy_install supervisor
 ADD ./supervisord.conf /etc/supervisord.conf
 
 # Install Wordpress
-ADD http://et.wordpress.org/latest-et.tar.gz /wordpress.tar.gz
+RUN wget http://et.wordpress.org/latest-et.tar.gz -O /wordpress.tar.gz
 RUN tar xvzf /wordpress.tar.gz -C /usr/share/nginx
 RUN mv /usr/share/nginx/www/5* /usr/share/nginx/wordpress
 RUN rm -rf /usr/share/nginx/www
