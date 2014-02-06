@@ -14,7 +14,8 @@ RUN dpkg-divert --local --rename --add /sbin/initctl
 RUN ln -s /bin/true /sbin/initctl
 
 # Basic Requirements
-RUN apt-get -y install mysql-server mysql-client nginx php5-fpm php5-mysql php-apc pwgen python-setuptools curl git unzip openssh-server vim
+# RUN apt-get -y install mysql-server mysql-client nginx php5-fpm php5-mysql php-apc pwgen python-setuptools curl git unzip openssh-server vim
+RUN apt-get -y install nginx php5-fpm php5-mysql php-apc pwgen python-setuptools curl git unzip openssh-server vim
 
 # Wordpress Requirements
 RUN apt-get -y install php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl libssh2-php
@@ -29,7 +30,7 @@ ADD ./wp-sendmail.js /etc/wp-sendmail.js
 RUN mkdir -p /var/run/sshd && locale-gen en_US.utf8 && echo 'LC_ALL="en_US.utf8"' > /etc/environment
 
 # mysql config
-RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+# RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 # Uncomment this line if you want mysql logs to a log file instead of syslog
 # RUN sed -i -e "s/^syslog/log-error=error.log/" /etc/mysql/conf.d/mysqld_safe_syslog.cnf
 

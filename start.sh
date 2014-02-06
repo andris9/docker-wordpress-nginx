@@ -25,8 +25,8 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
   echo "wordpress:$SSH_USER_PASSWORD" | chpasswd
 
   #mysql has to be started this way as it doesn't work to call from /etc/init.d
-  /usr/bin/mysqld_safe &
-  sleep 10s
+  # /usr/bin/mysqld_safe &
+  # sleep 10s
 
   # setup directories
   WORDPRESS_ROOT="/usr/share/nginx/www"
@@ -95,9 +95,9 @@ ENDL
   rm -rf /etc/wp-sendmail.js-e
 
   # Create database user for WordPress database
-  mysqladmin -u root password $MYSQL_ROOT_PASSWORD
-  mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE wordpress; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD'; FLUSH PRIVILEGES;"
-  killall mysqld
+  echo mysqladmin -u root password $MYSQL_ROOT_PASSWORD
+  echo mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE wordpress; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON wordpress.* TO 'wordpress'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD'; FLUSH PRIVILEGES;"
+  # killall mysqld
 fi
 
 # start all the services
