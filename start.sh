@@ -43,7 +43,7 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
   sed -e "s/database_name_here/$WORDPRESS_DB/
 s/username_here/$WORDPRESS_DB/
 s/password_here/$MYSQL_USER_PASSWORD/
-/'DB_HOST'/s/'localhost'/\$_SERVER[\"DB_PORT_3306_TCP_ADDR\"]/
+/'DB_HOST'/s/'localhost'/getenv(\"DB_PORT_3306_TCP_ADDR\")/
 /'AUTH_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
 /'SECURE_AUTH_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
 /'LOGGED_IN_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
