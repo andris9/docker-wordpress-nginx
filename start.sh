@@ -8,7 +8,7 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
   
   # Set these with -e option
   # WORDPRESS_DB="wordpress"
-  # MYSQL_ROOT_PASSWORD="12345"
+  # MYSQLPASS="12345"
   
   MYSQL_USER_PASSWORD=`pwgen -c -n -1 12`
   SSH_ROOT_PASSWORD=`pwgen -c -n -1 12`
@@ -43,7 +43,7 @@ if [ ! -f /usr/share/nginx/www/wp-config.php ]; then
   sed -e "s/database_name_here/$WORDPRESS_DB/
 s/username_here/$WORDPRESS_DB/
 s/password_here/$MYSQL_USER_PASSWORD/
-/'DB_HOST'/s/'localhost'/\$_ENV[\"DB_PORT_3306_TCP_ADDR\"]/
+/'DB_HOST'/s/'localhost'/\$_SERVER[\"DB_PORT_3306_TCP_ADDR\"]/
 /'AUTH_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
 /'SECURE_AUTH_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
 /'LOGGED_IN_KEY'/s/put your unique phrase here/`pwgen -c -n -1 65`/
@@ -95,8 +95,8 @@ ENDL
   rm -rf /etc/wp-sendmail.js-e
 
   # Create database user for WordPress database
-  # echo mysqladmin -u root password $MYSQL_ROOT_PASSWORD
-  echo mysql -h $DB_PORT_3306_TCP_ADDR -uroot -p$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE $WORDPRESS_DB; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON $WORDPRESS_DB.* TO '$WORDPRESS_DB'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD'; FLUSH PRIVILEGES;"
+  # echo mysqladmin -u root password $MYSQLPASS
+  echo mysql -h $DB_PORT_3306_TCP_ADDR -uroot -p$MYSQLPASS -e "CREATE DATABASE $WORDPRESS_DB; GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON $WORDPRESS_DB.* TO '$WORDPRESS_DB'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD'; FLUSH PRIVILEGES;"
   # killall mysqld
 fi
 

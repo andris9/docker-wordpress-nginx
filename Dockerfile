@@ -27,7 +27,7 @@ RUN npm install --unsafe-perm -g wp-sendmail@0.1.5
 ADD ./wp-sendmail.js /etc/wp-sendmail.js
 
 # Create directory for sshd and set locale
-RUN mkdir -p /var/run/sshd && locale-gen en_US.utf8 && echo 'LC_ALL="en_US.utf8"' > /etc/environment
+RUN mkdir -p /var/run/sshd && locale-gen en_US.utf8 && echo 'LC_ALL="en_US.utf8"' >> /etc/environment
 
 # mysql config
 # RUN sed -i -e "s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
@@ -46,7 +46,7 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g;s/upload_max_filesize = 2M/upload_max_filesize = 10M/;s/post_max_size = 8M/post_max_size = 10M/;s/expose_php = On/expose_php = Off/;s/max_execution_time = 30/max_execution_time = 60/;s/;ignore_user_abort = On/ignore_user_abort = Off/;s/disable_functions = /disable_functions = php_uname, getmyuid, getmypid, passthru, leak, listen, diskfreespace, tmpfile, link, ignore_user_abort, shell_exec, dl, set_time_limit, exec, system, highlight_file, source, show_source, fpaththru, virtual, posix_ctermid, posix_getcwd, posix_getegid, posix_geteuid, posix_getgid, posix_getgrgid, posix_getgrnam, posix_getgroups, posix_getlogin, posix_getpgid, posix_getpgrp, posix_getpid, posix, _getppid, posix_getpwnam, posix_getpwuid, posix_getrlimit, posix_getsid, posix_getuid, posix_isatty, posix_kill, posix_mkfifo, posix_setegid, posix_seteuid, posix_setgid, posix_setpgid, posix_setsid, posix_setuid, posix_times, posix_ttyname, posix_uname, proc_open, proc_close, proc_get_status, proc_nice, proc_terminate, phpinfo,/" /etc/php5/fpm/php.ini
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php5/fpm/php-fpm.conf
 RUN find /etc/php5/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
-RUN echo "php_admin_value[sendmail_path] = /usr/bin/wp-sendmail" >> /etc/php5/fpm/pool.d/www.conf
+RUN echo "php_admin_value[sendmail_path] = /usr/bin/wp-sendmail" >> /etc/php5/fpm/pool.d/www.conf && echo "env[DB_PORT_3306_TCP_ADDR] = \$DB_PORT_3306_TCP_ADDR" >> /etc/php5/fpm/pool.d/www.conf
 
 # User for the blog
 RUN useradd -s /bin/bash -d /home/wordpress -m wordpress && usermod -aG www-data wordpress
