@@ -54,6 +54,10 @@ You can the visit the following URL in a browser on your host machine to get sta
 http://127.0.0.1:<port>
 ```
 
+### MySQL
+
+MySQL is not included. You can link another mysql container with -l option. Also set `MYSQL_ROOT_PASSWORD` and `WORDPRESS_DB` environment variables with -e option.
+
 ### E-mail
 
 If you want to send mail you need to provide SMTP connection data by adding `-e SMTP=smtpdata` option to `docker run`. This information is not exposed to the php user. 
