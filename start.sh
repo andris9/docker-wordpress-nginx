@@ -89,7 +89,7 @@ ENDL
   find "$WORDPRESS_ROOT" -type f -exec chmod 644 {} \;
 
   # email settings
-  sed -i -e "s/MYSQL_PASSWORD/$MYSQL_USER_PASSWORD/;s/MYSQL_PREFIX/wp_/" /etc/wp-sendmail.js
+  sed -i -e "s/MYSQL_PASSWORD/$MYSQL_USER_PASSWORD/;s/MYSQL_PREFIX/wp_/;s/MYSQL_USER/$WORDPRESS_DB/;s/MYSQL_DB/$WORDPRESS_DB/" /etc/wp-sendmail.js
   chown root:root /etc/wp-sendmail.js
   chmod 0400 /etc/wp-sendmail.js
   rm -rf /etc/wp-sendmail.js-e
