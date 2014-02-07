@@ -74,4 +74,4 @@ RUN chmod 755 /start.sh
 EXPOSE 22
 EXPOSE 80
 
-CMD ["/bin/bash", "/start.sh"]
+CMD env | grep _ >> /etc/environment && /bin/bash /start.sh
