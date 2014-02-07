@@ -25,7 +25,7 @@ module.exports = {
     },
 
     mysql: {
-        url: "mysql://MYSQL_USER:MYSQL_PASSWORD@" + process.env("DB_PORT_3306_TCP_ADDR") + "/MYSQL_DB",
+        url: "mysql://MYSQL_USER:MYSQL_PASSWORD@" + process.env.DB_PORT_3306_TCP_ADDR + "/MYSQL_DB",
         prefix: "MYSQL_PREFIX"
     }
 };
